@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.api.v1 import (
     adoption_applications,
     adoptions,
+    admin_audit,
     auth,
     cart,
     files,
@@ -39,3 +40,16 @@ api_router.include_router(
 )
 api_router.include_router(live_pets.router, prefix="/live-pets", tags=["live_pets"])
 api_router.include_router(service_bookings.router, prefix="/service-bookings", tags=["service_bookings"])
+api_router.include_router(admin_audit.admin_user_router, prefix="/admin/users", tags=["admin"])
+api_router.include_router(admin_audit.admin_role_router, prefix="/admin/roles", tags=["admin"])
+api_router.include_router(admin_audit.admin_permission_router, prefix="/admin/permissions", tags=["admin"])
+api_router.include_router(admin_audit.router, prefix="/admin/audit", tags=["admin-audit"])
+api_router.include_router(admin_audit.risk_event_router, prefix="/risk/events", tags=["risk"])
+api_router.include_router(admin_audit.risk_rule_router, prefix="/admin/risk/rules", tags=["risk"])
+api_router.include_router(admin_audit.report_router, prefix="/admin/reports", tags=["reports"])
+api_router.include_router(admin_audit.blacklist_router, prefix="/admin/blacklist", tags=["risk"])
+api_router.include_router(admin_audit.message_router, prefix="/messages", tags=["messages"])
+api_router.include_router(admin_audit.message_template_router, prefix="/admin/message-templates", tags=["messages"])
+api_router.include_router(admin_audit.notification_router, prefix="/admin/notifications", tags=["messages"])
+api_router.include_router(admin_audit.config_router, prefix="/admin/configs", tags=["operation-configs"])
+api_router.include_router(admin_audit.statistics_router, prefix="/admin/statistics", tags=["statistics"])
