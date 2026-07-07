@@ -59,6 +59,20 @@ def require_roles(*roles: str):
     return checker
 
 
+def require_all_roles(*roles: str):
+    def checker(current_user: User = Depends(get_current_user)) -> User:
+        role_codes = get_active_role_codes(current_user)
+        if not set(roles).issubset(role_codes):
+            raise AppException(ErrorCode.forbidden, "没有操作权限", HTTP_403_FORBIDDEN)
+        return current_user
+
+    return checker
+
+
+def get_active_role_codes(user: User) -> set[str]:
+    return {role.code for role in user.roles if role.status == "active"}
+
+
 def require_permission(permission_code: str):
     def checker(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> User:
         stmt = (
@@ -88,20 +102,6 @@ def require_permission(permission_code: str):
         raise AppException(ErrorCode.forbidden, "No admin permission", HTTP_403_FORBIDDEN)
 
     return checker
-
-
-def require_all_roles(*roles: str):
-    def checker(current_user: User = Depends(get_current_user)) -> User:
-        role_codes = get_active_role_codes(current_user)
-        if not set(roles).issubset(role_codes):
-            raise AppException(ErrorCode.forbidden, "没有操作权限", HTTP_403_FORBIDDEN)
-        return current_user
-
-    return checker
-
-
-def get_active_role_codes(user: User) -> set[str]:
-    return {role.code for role in user.roles if role.status == "active"}
 
 
 require_user = require_roles(RoleCode.user.value)

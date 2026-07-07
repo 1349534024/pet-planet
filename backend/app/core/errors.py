@@ -27,12 +27,12 @@ class ErrorCode(StrEnum):
     pet_permission_denied = "PET_PERMISSION_DENIED"
     file_invalid_type = "FILE_INVALID_TYPE"
     file_too_large = "FILE_TOO_LARGE"
-    audit_not_found = "AUDIT_NOT_FOUND"
-    audit_already_reviewed = "AUDIT_ALREADY_REVIEWED"
-    audit_invalid_status = "AUDIT_INVALID_STATUS"
     order_not_found = "ORDER_NOT_FOUND"
     order_status_invalid = "ORDER_STATUS_INVALID"
     payment_callback_invalid = "PAYMENT_CALLBACK_INVALID"
+    audit_not_found = "AUDIT_NOT_FOUND"
+    audit_already_reviewed = "AUDIT_ALREADY_REVIEWED"
+    audit_invalid_status = "AUDIT_INVALID_STATUS"
 
 
 class AppException(Exception):
