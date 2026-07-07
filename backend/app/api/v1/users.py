@@ -5,7 +5,7 @@ from app.core.deps import get_current_user, get_db
 from app.core.response import success
 from app.models.user import User
 from app.repositories.user_repo import UserRepository
-from app.schemas.user import AddressCreateIn, AddressOut, UserMeOut, UserMeUpdateIn
+from app.schemas.user import AddressCreateIn, AddressOut, UserMeDetailOut, UserMeUpdateIn
 from app.services.user_service import UserService
 
 router = APIRouter()
@@ -13,7 +13,7 @@ router = APIRouter()
 
 @router.get("/me")
 def get_me(current_user: User = Depends(get_current_user)):
-    return success(UserMeOut.model_validate(current_user).model_dump())
+    return success(UserMeDetailOut.model_validate(current_user).model_dump())
 
 
 @router.patch("/me")
@@ -23,7 +23,7 @@ def update_me(
     db: Session = Depends(get_db),
 ):
     user = UserService(db).update_me(current_user, payload)
-    return success(UserMeOut.model_validate(user).model_dump())
+    return success(UserMeDetailOut.model_validate(user).model_dump())
 
 
 @router.get("/me/addresses")

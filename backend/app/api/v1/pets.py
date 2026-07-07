@@ -5,7 +5,15 @@ from app.core.deps import get_current_user, get_db
 from app.core.pagination import PageParams, get_page_params
 from app.core.response import page_response, success
 from app.models.user import User
-from app.schemas.pet import PetCreateIn, PetOut, PetRecordCreateIn, PetRecordOut, PetUpdateIn, ReminderCreateIn
+from app.schemas.pet import (
+    PetCreateIn,
+    PetOut,
+    PetRecordCreateIn,
+    PetRecordOut,
+    PetRecordUpdateIn,
+    PetUpdateIn,
+    ReminderCreateIn,
+)
 from app.services.pet_service import PetService
 
 router = APIRouter()
@@ -65,6 +73,40 @@ def create_pet_record(
 ):
     record = PetService(db).create_record(current_user.id, pet_id, payload)
     return success(PetRecordOut.model_validate(record).model_dump())
+
+
+@router.get("/{pet_id}/records/{record_id}")
+def get_pet_record(
+    pet_id: int,
+    record_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    record = PetService(db).get_user_record(current_user.id, pet_id, record_id)
+    return success(PetRecordOut.model_validate(record).model_dump())
+
+
+@router.patch("/{pet_id}/records/{record_id}")
+def update_pet_record(
+    pet_id: int,
+    record_id: int,
+    payload: PetRecordUpdateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    record = PetService(db).update_record(current_user.id, pet_id, record_id, payload)
+    return success(PetRecordOut.model_validate(record).model_dump())
+
+
+@router.delete("/{pet_id}/records/{record_id}")
+def delete_pet_record(
+    pet_id: int,
+    record_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    PetService(db).delete_record(current_user.id, pet_id, record_id)
+    return success({"deleted": True})
 
 
 @router.post("/reminders")
