@@ -29,6 +29,13 @@ class Settings(BaseSettings):
     sms_access_key: str | None = None
     sms_secret_key: str | None = None
 
+    alipay_sandbox_app_id: str | None = None
+    alipay_sandbox_private_key: str | None = None
+    alipay_sandbox_public_key: str | None = None
+    alipay_sandbox_gateway: str = "https://openapi-sandbox.dl.alipaydev.com/gateway.do"
+    alipay_sandbox_notify_url: str | None = None
+    alipay_sandbox_return_url: str | None = None
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 

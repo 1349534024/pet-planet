@@ -27,6 +27,9 @@ class ErrorCode(StrEnum):
     pet_permission_denied = "PET_PERMISSION_DENIED"
     file_invalid_type = "FILE_INVALID_TYPE"
     file_too_large = "FILE_TOO_LARGE"
+    order_not_found = "ORDER_NOT_FOUND"
+    order_status_invalid = "ORDER_STATUS_INVALID"
+    payment_callback_invalid = "PAYMENT_CALLBACK_INVALID"
 
 
 class AppException(Exception):
