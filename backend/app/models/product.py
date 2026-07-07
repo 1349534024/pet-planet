@@ -32,7 +32,7 @@ class Product(Base, TimestampMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     merchant_id: Mapped[int | None] = mapped_column(Integer, index=True)
-    category_id: Mapped[int] = mapped_column(ForeignKey("product_category.id"), index=True)
+    category_id: Mapped[int] = mapped_column(ForeignKey("product_category.id"))
     brand_id: Mapped[int | None] = mapped_column(ForeignKey("brand.id"), index=True)
     title: Mapped[str] = mapped_column(String(255), index=True)
     subtitle: Mapped[str | None] = mapped_column(String(255))
