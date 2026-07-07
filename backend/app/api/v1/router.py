@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1 import admin_audit, auth, files, pets, reminders, roles, users
+from app.api.v1 import admin_audit, auth, cart, files, orders, payments, pets, products, reminders, roles, users
 
 api_router = APIRouter()
 
@@ -10,6 +10,10 @@ api_router.include_router(roles.router, prefix="/roles", tags=["roles"])
 api_router.include_router(pets.router, prefix="/pets", tags=["pets"])
 api_router.include_router(reminders.router, prefix="/reminders", tags=["reminders"])
 api_router.include_router(files.router, prefix="/files", tags=["files"])
+api_router.include_router(products.router, prefix="/products", tags=["products"])
+api_router.include_router(cart.router, prefix="/cart", tags=["cart"])
+api_router.include_router(orders.router, prefix="/orders", tags=["orders"])
+api_router.include_router(payments.router, prefix="/payments", tags=["payments"])
 api_router.include_router(admin_audit.admin_user_router, prefix="/admin/users", tags=["admin"])
 api_router.include_router(admin_audit.admin_role_router, prefix="/admin/roles", tags=["admin"])
 api_router.include_router(admin_audit.admin_permission_router, prefix="/admin/permissions", tags=["admin"])
