@@ -1,7 +1,7 @@
 """add c module tables
 
 Revision ID: 20260707_0001
-Revises:
+Revises: 20260706_2249
 Create Date: 2026-07-07 00:00:00.000000
 """
 
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 revision: str = "20260707_0001"
-down_revision: str | None = None
+down_revision: str | None = "20260706_2249"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
@@ -34,7 +34,12 @@ def audit_columns() -> list[sa.Column]:
 
 
 def create_indexed_fk(table: str, column: str, target: str) -> None:
-    op.create_foreign_key(f"fk_{table}_{column}", table, target, [column], ["id"])
+    fk_name = f"fk_{table}_{column}"
+    if op.get_bind().dialect.name == "sqlite":
+        with op.batch_alter_table(table) as batch_op:
+            batch_op.create_foreign_key(fk_name, target, [column], ["id"])
+    else:
+        op.create_foreign_key(fk_name, table, target, [column], ["id"])
     op.create_index(f"ix_{table}_{column}", table, [column])
 
 
