@@ -11,6 +11,10 @@ class PasswordLoginIn(BaseModel):
     password: str = Field(min_length=6, max_length=64)
 
 
+class PasswordSetIn(BaseModel):
+    password: str = Field(min_length=6, max_length=64)
+
+
 class TokenOut(BaseModel):
     access_token: str
     refresh_token: str

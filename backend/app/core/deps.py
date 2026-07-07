@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_403_FORBIDDEN
 
 from app.core.errors import AppException, ErrorCode
+from app.core.permissions import RoleCode
 from app.core.security import decode_token
 from app.db.session import SessionLocal
 from app.models.admin_audit import AdminPermission, AdminRole, AdminRolePermission, AdminUser, AdminUserRole
@@ -35,6 +36,8 @@ def get_current_user(
         payload = decode_token(credentials.credentials)
     except JWTError as exc:
         raise AppException(ErrorCode.unauthorized, "无效 token", HTTP_401_UNAUTHORIZED) from exc
+    if payload.get("type") != "access":
+        raise AppException(ErrorCode.unauthorized, "无效 token 类型", HTTP_401_UNAUTHORIZED)
     user_id = payload.get("sub")
     if not user_id:
         raise AppException(ErrorCode.unauthorized, "无效 token", HTTP_401_UNAUTHORIZED)
@@ -48,7 +51,7 @@ def get_current_user(
 
 def require_roles(*roles: str):
     def checker(current_user: User = Depends(get_current_user)) -> User:
-        role_codes = {role.code for role in current_user.roles}
+        role_codes = get_active_role_codes(current_user)
         if not set(roles).intersection(role_codes):
             raise AppException(ErrorCode.forbidden, "没有操作权限", HTTP_403_FORBIDDEN)
         return current_user
@@ -85,3 +88,24 @@ def require_permission(permission_code: str):
         raise AppException(ErrorCode.forbidden, "No admin permission", HTTP_403_FORBIDDEN)
 
     return checker
+
+
+def require_all_roles(*roles: str):
+    def checker(current_user: User = Depends(get_current_user)) -> User:
+        role_codes = get_active_role_codes(current_user)
+        if not set(roles).issubset(role_codes):
+            raise AppException(ErrorCode.forbidden, "没有操作权限", HTTP_403_FORBIDDEN)
+        return current_user
+
+    return checker
+
+
+def get_active_role_codes(user: User) -> set[str]:
+    return {role.code for role in user.roles if role.status == "active"}
+
+
+require_user = require_roles(RoleCode.user.value)
+require_merchant = require_roles(RoleCode.merchant.value)
+require_operator = require_roles(RoleCode.operator.value)
+require_admin = require_roles(RoleCode.admin.value)
+require_admin_or_operator = require_roles(RoleCode.admin.value, RoleCode.operator.value)

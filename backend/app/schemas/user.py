@@ -16,6 +16,18 @@ class UserMeOut(ORMModel):
     created_at: datetime
 
 
+class UserProfileOut(ORMModel):
+    gender: str | None
+    city: str | None
+    signature: str | None
+    has_pet: bool
+    interest_tags: str | None
+
+
+class UserMeDetailOut(UserMeOut):
+    profile: UserProfileOut | None
+
+
 class UserMeUpdateIn(BaseModel):
     nickname: str | None = Field(default=None, max_length=64)
     avatar: str | None = Field(default=None, max_length=512)

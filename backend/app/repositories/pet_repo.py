@@ -12,6 +12,9 @@ class PetRepository:
     def get_by_id(self, pet_id: int) -> PetProfile | None:
         return self.db.get(PetProfile, pet_id)
 
+    def get_record_by_id(self, record_id: int) -> PetGrowthRecord | None:
+        return self.db.get(PetGrowthRecord, record_id)
+
     def list_by_user(self, user_id: int, page: PageParams) -> tuple[list[PetProfile], int]:
         stmt = select(PetProfile).where(PetProfile.user_id == user_id, PetProfile.deleted_at.is_(None))
         total = self.db.scalar(select(func.count()).select_from(stmt.subquery())) or 0
@@ -44,6 +47,12 @@ class PetRepository:
         )
 
     def create_record(self, record: PetGrowthRecord) -> PetGrowthRecord:
+        self.db.add(record)
+        self.db.commit()
+        self.db.refresh(record)
+        return record
+
+    def save_record(self, record: PetGrowthRecord) -> PetGrowthRecord:
         self.db.add(record)
         self.db.commit()
         self.db.refresh(record)

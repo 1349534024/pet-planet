@@ -58,6 +58,15 @@ class PetRecordCreateIn(BaseModel):
     occurred_at: datetime | None = None
 
 
+class PetRecordUpdateIn(BaseModel):
+    record_type: str | None = Field(default=None, max_length=32)
+    title: str | None = Field(default=None, max_length=128)
+    content: str | None = None
+    media_asset_ids: str | None = Field(default=None, max_length=512)
+    occurred_at: datetime | None = None
+    status: str | None = Field(default=None, max_length=32)
+
+
 class PetRecordOut(ORMModel):
     id: int
     pet_id: int
