@@ -5,7 +5,20 @@ from sqlalchemy import engine_from_config, pool
 
 from app.core.config import settings
 from app.db.base import Base
-from app.models import cart, file, operation_log, order, payment, pet, product, user  # noqa: F401
+from app.models import (  # noqa: F401
+    adoption,
+    cart,
+    file,
+    live_pet,
+    merchant,
+    operation_log,
+    order,
+    payment,
+    pet,
+    product,
+    service_booking,
+    user,
+)
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.database_url)
