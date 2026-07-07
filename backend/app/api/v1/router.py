@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1 import auth, files, pets, reminders, users
+from app.api.v1 import admin_audit, auth, files, pets, reminders, users
 
 api_router = APIRouter()
 
@@ -9,3 +9,16 @@ api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(pets.router, prefix="/pets", tags=["pets"])
 api_router.include_router(reminders.router, prefix="/reminders", tags=["reminders"])
 api_router.include_router(files.router, prefix="/files", tags=["files"])
+api_router.include_router(admin_audit.admin_user_router, prefix="/admin/users", tags=["admin"])
+api_router.include_router(admin_audit.admin_role_router, prefix="/admin/roles", tags=["admin"])
+api_router.include_router(admin_audit.admin_permission_router, prefix="/admin/permissions", tags=["admin"])
+api_router.include_router(admin_audit.router, prefix="/admin/audit", tags=["admin-audit"])
+api_router.include_router(admin_audit.risk_event_router, prefix="/risk/events", tags=["risk"])
+api_router.include_router(admin_audit.risk_rule_router, prefix="/admin/risk/rules", tags=["risk"])
+api_router.include_router(admin_audit.report_router, prefix="/admin/reports", tags=["reports"])
+api_router.include_router(admin_audit.blacklist_router, prefix="/admin/blacklist", tags=["risk"])
+api_router.include_router(admin_audit.message_router, prefix="/messages", tags=["messages"])
+api_router.include_router(admin_audit.message_template_router, prefix="/admin/message-templates", tags=["messages"])
+api_router.include_router(admin_audit.notification_router, prefix="/admin/notifications", tags=["messages"])
+api_router.include_router(admin_audit.config_router, prefix="/admin/configs", tags=["operation-configs"])
+api_router.include_router(admin_audit.statistics_router, prefix="/admin/statistics", tags=["statistics"])
