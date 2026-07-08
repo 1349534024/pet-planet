@@ -1,7 +1,7 @@
 """add order tables
 
 Revision ID: 20260707_0003
-Revises: 20260707_0002
+Revises: 20260707_0002_cart
 Create Date: 2026-07-07
 """
 
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 revision: str = "20260707_0003"
-down_revision: str | None = "20260707_0002"
+down_revision: str | None = "20260707_0002_cart"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 

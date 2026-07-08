@@ -1,7 +1,7 @@
 """add admin audit tables
 
 Revision ID: 20260706_2249
-Revises:
+Revises: 20260707_0006_report_media
 Create Date: 2026-07-06 22:49:00.000000
 """
 
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 revision: str = "20260706_2249"
-down_revision: str | None = None
+down_revision: str | None = "20260707_0006_report_media"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 

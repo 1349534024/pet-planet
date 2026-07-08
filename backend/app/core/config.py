@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     app_name: str = "pet-planet"
     app_env: str = "local"
     debug: bool = True
+    cors_origins: str = "http://localhost:3000"
 
     database_url: str = "sqlite:///./pet_planet.db"
 
@@ -37,6 +38,10 @@ class Settings(BaseSettings):
     alipay_sandbox_return_url: str | None = None
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
 
 @lru_cache
