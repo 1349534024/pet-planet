@@ -26,6 +26,32 @@ uvicorn app.main:app --reload
 http://127.0.0.1:8000/docs
 ```
 
+## Docker 生产部署
+
+项目根目录已提供生产部署文件：
+
+```text
+Dockerfile
+docker-compose.yml
+.dockerignore
+```
+
+启动前先准备后端环境变量：
+
+```bash
+copy backend\.env.example backend\.env
+```
+
+启动 FastAPI、MySQL、Redis：
+
+```bash
+docker compose up -d --build
+```
+
+应用容器会等待 MySQL ready，自动执行 `alembic upgrade head`，再启动 FastAPI。
+
+Docker MySQL 首次启动会自动执行 `backend/scripts/init_mysql.sql`，创建 `pet_planet` 数据库、`pet` 用户并授权；本地 MySQL 可手动执行 `mysql -u root -p < backend/scripts/init_mysql.sql`。
+
 ## 团队协作
 
 先阅读：
