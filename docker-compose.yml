@@ -11,6 +11,8 @@ services:
     environment:
       APP_ENV: production
       DEBUG: "false"
+      MYSQL_HOST: mysql
+      MYSQL_USER: pet
       MYSQL_DATABASE: ${MYSQL_DATABASE:-pet_planet}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-pet123456}
       DATABASE_URL: mysql+pymysql://pet:${MYSQL_PASSWORD:-pet123456}@mysql:3306/${MYSQL_DATABASE:-pet_planet}
@@ -28,28 +30,12 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: >
-      sh -c "
-        python -c \"import os,time,pymysql;
-        url=os.environ['DATABASE_URL'];
-        host='mysql'; port=3306; user='pet'; password=os.environ.get('MYSQL_PASSWORD','pet123456'); database=os.environ.get('MYSQL_DATABASE','pet_planet');
-        deadline=time.time()+120;
-        last=None;
-        while time.time()<deadline:
-            try:
-                conn=pymysql.connect(host=host,port=port,user=user,password=password,database=database,connect_timeout=3);
-                conn.close();
-                print('mysql is ready');
-                break
-            except Exception as exc:
-                last=exc;
-                print(f'waiting for mysql: {exc}');
-                time.sleep(2)
-        else:
-            raise SystemExit(f'mysql is not ready: {last}')\"
-        alembic upgrade head
-        exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers ${UVICORN_WORKERS:-2}
-      "
+    command:
+      [
+        "sh",
+        "-c",
+        "python scripts/wait_for_mysql.py && alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers ${UVICORN_WORKERS:-2}",
+      ]
     healthcheck:
       test:
         [
@@ -100,7 +86,7 @@ services:
     restart: unless-stopped
     command: ["redis-server", "--appendonly", "yes"]
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "${REDIS_PORT:-6380}:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -108,6 +94,27 @@ services:
       interval: 10s
       timeout: 3s
       retries: 10
+      start_period: 10s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: pet-planet-frontend:1.0.0
+    container_name: pet-planet-frontend
+    restart: unless-stopped
+    environment:
+      FRONTEND_API_BASE_URL: ${FRONTEND_API_BASE_URL:-}
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ >/dev/null 2>&1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
       start_period: 10s
 
 volumes:
